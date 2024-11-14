@@ -6,6 +6,35 @@ def read_json(file_path):
         return json.load(file)
 
 
+def generate_diff(file_path1, file_path2):
+    # Чтение данных из JSON файлов
+    data1 = read_json(file_path1)
+    data2 = read_json(file_path2)
+
+    all_keys = sorted(set(data1.keys()).union(data2.keys()))
+
+    result = ["{"]
+
+    for key in all_keys:
+
+        if key in data1 and key in data2:
+            if data1[key] == data2[key]:
+                result.append(f"    {key}: {data1[key]}")
+            else:
+                result.append(f"  - {key}: {data1[key]}")
+                result.append(f"  + {key}: {data2[key]}")
+
+        elif key in data1:
+            result.append(f"  - {key}: {data1[key]}")
+
+        elif key in data2:
+            result.append(f"  + {key}: {data2[key]}")
+
+    result.append("}")
+
+    return "\n".join(result)
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="gendiff",
@@ -31,6 +60,9 @@ def main():
     # Вывод данных для проверки
     print("File 1 data:", file1_data)
     print("File 2 data:", file2_data)
+
+    diff = generate_diff(args.first_file, args.second_file)
+    print(diff)
 
 
 if __name__ == "__main__":
