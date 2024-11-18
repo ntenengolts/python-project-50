@@ -13,7 +13,7 @@ jobs:
           - '3.10'
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v4
         with:
@@ -21,7 +21,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install poetry
-          make install
+          poetry install --with dev
       - name: Run linter and pytest
         run: |
           make check
