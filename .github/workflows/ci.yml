@@ -33,7 +33,7 @@ jobs:
       - name: Run linter and pytest
         run: |
           make check
-          poetry run pytest --cov=gendiff --cov-report=coverage
+          poetry run pytest --cov=gendiff --cov-report=term
 
       - name: Test & publish code coverage
         uses: paambaati/codeclimate-action@v5.0.0
