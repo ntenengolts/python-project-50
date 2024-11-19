@@ -1,5 +1,6 @@
 import os
 import sys
+
 from gendiff import generate_diff
 
 sys.path.insert(0, os.path.abspath(
