@@ -1,10 +1,10 @@
 import os
 import sys
-import pytest
-
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
-
 from gendiff import generate_diff
+
+sys.path.insert(0, os.path.abspath(
+    os.path.join(os.path.dirname(__file__), "..")
+))
 
 FIXTURES_DIR = os.path.join(os.path.dirname(__file__), "fixtures")
 
@@ -58,7 +58,8 @@ def test_empty_files():
 
 def test_missing_keys():
     """
-    Проверяет, что функция корректно обрабатывает файлы с отсутствующими ключами.
+    Проверяет, что функция корректно обрабатывает файлы
+    с отсутствующими ключами.
     """
     file1 = os.path.join(FIXTURES_DIR, "file1.json")
     file4 = os.path.join(FIXTURES_DIR, "file4.json")
