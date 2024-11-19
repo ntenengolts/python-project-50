@@ -33,7 +33,7 @@ jobs:
       - name: Run linter and pytest
         run: |
           make check
-          poetry run pytest --cov=gendiff --cov-report=coverage
+          poetry run pytest --cov=gendiff --cov-report=lcov
 
       - name: Test & publish code coverage
         uses: paambaati/codeclimate-action@v5.0.0
@@ -42,5 +42,5 @@ jobs:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
           coverageCommand: |
-            poetry run pytest --cov=gendiff --cov-report=coverage
+            poetry run pytest --cov=gendiff --cov-report=lcov
           debug: true
