@@ -43,5 +43,4 @@ jobs:
         with:
           coverageCommand: |
             poetry run pytest --cov=gendiff --cov-report=lcov
-          coverage-input-type: lcov
           debug: true
