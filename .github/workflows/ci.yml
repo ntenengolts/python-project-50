@@ -30,7 +30,7 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          poetry run coverage run -m pytest  # Запуск тестов через Poetry
+          poetry run pytest --maxfail=1 --disable-warnings -q  # Запуск тестов через Poetry
           poetry run coverage xml -o coverage.xml  # Генерация отчета
 
       - name: Upload coverage to Code Climate
