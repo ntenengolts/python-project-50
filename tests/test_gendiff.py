@@ -67,3 +67,15 @@ def test_missing_keys():
     diff = generate_diff(file1, file4)
     expected = "{\n  - age: 30\n  + city: New York\n  - name: Alice\n}"
     assert diff == expected
+
+
+def test_diff_yaml_files():
+    """
+    Проверяет, что различия между файлами корректно отображаются.
+    """
+    file1 = os.path.join(FIXTURES_DIR, "file1.yml")
+    file2 = os.path.join(FIXTURES_DIR, "file2.yml")
+    expected = read_fixture("expected_diff_yml.txt").strip()
+    diff = generate_diff(file1, file2)
+    assert diff == expected
+

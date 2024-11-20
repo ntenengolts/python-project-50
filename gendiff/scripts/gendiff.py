@@ -1,16 +1,20 @@
 import argparse
 import json
+import yaml
+
+from gendiff.parser import read_file
 
 
-def read_json(file_path):
-    with open(file_path, 'r') as file:
-        return json.load(file)
+def format_value(value):
+    if isinstance(value, bool):
+        return str(value).lower()
+    return value
 
 
 def generate_diff(file_path1, file_path2):
-    # Чтение данных из JSON файлов
-    data1 = read_json(file_path1)
-    data2 = read_json(file_path2)
+    # Чтение данных из JSON или YAML файлов
+    data1 = read_file(file_path1)
+    data2 = read_file(file_path2)
 
     all_keys = sorted(set(data1.keys()).union(data2.keys()))
 
@@ -20,16 +24,16 @@ def generate_diff(file_path1, file_path2):
 
         if key in data1 and key in data2:
             if data1[key] == data2[key]:
-                result.append(f"    {key}: {data1[key]}")
+                result.append(f"    {key}: {format_value(data1[key])}")
             else:
-                result.append(f"  - {key}: {data1[key]}")
+                result.append(f"  - {key}: {format_value(data1[key])}")
                 result.append(f"  + {key}: {data2[key]}")
 
         elif key in data1:
-            result.append(f"  - {key}: {data1[key]}")
+            result.append(f"  - {key}: {format_value(data1[key])}")
 
         elif key in data2:
-            result.append(f"  + {key}: {data2[key]}")
+            result.append(f"  + {key}: {format_value(data2[key])}")
 
     result.append("}")
 
@@ -54,13 +58,6 @@ def main():
 
     # Парсим аргументы
     args = parser.parse_args()
-
-    # Чтение файлов
-    file1_data = read_json(args.first_file)
-    file2_data = read_json(args.second_file)
-    # Вывод данных для проверки
-    print("File 1 data:", file1_data)
-    print("File 2 data:", file2_data)
 
     diff = generate_diff(args.first_file, args.second_file)
     print(diff)
