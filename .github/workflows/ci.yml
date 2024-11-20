@@ -25,14 +25,13 @@ jobs:
 
       - name: Install dependencies
         run: |
-          poetry install
-          python -m pip install --upgrade pip
-          pip install pytest coverage
+          poetry install --no-dev
+          poetry show  # Проверка установленных зависимостей
 
       - name: Run tests with coverage
         run: |
-          coverage run -m pytest
-          coverage xml -o coverage.xml
+          poetry run coverage run -m pytest  # Запуск тестов через Poetry
+          poetry run coverage xml -o coverage.xml  # Генерация отчета
 
       - name: Upload coverage to Code Climate
         env:
