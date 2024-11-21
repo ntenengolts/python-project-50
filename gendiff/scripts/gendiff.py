@@ -3,41 +3,101 @@ import json
 import yaml
 
 from gendiff.parser import read_file
+from gendiff.formatters.stylish import format_stylish
 
-
-def format_value(value):
-    if isinstance(value, bool):
+def format_value(value, depth=0):
+    """
+    Форматирует значение для отображения.
+    """
+    if isinstance(value, dict):
+        indent = "    " * (depth + 1)
+        lines = ["{"]
+        for key, val in value.items():
+            lines.append(f"{indent}{key}: {format_value(val, depth + 1)}")
+        lines.append("    " * depth + "}")
+        return "\n".join(lines)
+    elif isinstance(value, bool):
         return str(value).lower()
-    return value
+    elif value is None:
+        return "null"
+    else:
+        return str(value)
+
+#  Далее изначальная структура функции (до шага 7)
+
+#    if isinstance(value, bool):
+#        return str(value).lower()
+#    return value
 
 
-def generate_diff(file_path1, file_path2):
+def build_diff(data1, data2):
+    """
+    Построение дерева различий между двумя структурами.
+    """
+    keys = sorted(set(data1.keys()).union(data2.keys()))
+    diff = []
+
+    for key in keys:
+        if key in data1 and key in data2:
+            if isinstance(data1[key], dict) and isinstance(data2[key], dict):
+                # Рекурсивно строим diff для вложенных структур
+                children = build_diff(data1[key], data2[key])
+                diff.append({"key": key, "type": "nested", "children": children})
+            elif data1[key] == data2[key]:
+                diff.append({"key": key, "type": "unchanged", "value": data1[key]})
+            else:
+                diff.append({
+                    "key": key,
+                    "type": "changed",
+                    "value_before": data1[key],
+                    "value_after": data2[key],
+                })
+        elif key in data1:
+            diff.append({"key": key, "type": "removed", "value": data1[key]})
+        elif key in data2:
+            diff.append({"key": key, "type": "added", "value": data2[key]})
+
+    return diff
+
+
+def generate_diff(file_path1, file_path2, format_name='stylish'):
     # Чтение данных из JSON или YAML файлов
     data1 = read_file(file_path1)
     data2 = read_file(file_path2)
 
-    all_keys = sorted(set(data1.keys()).union(data2.keys()))
+    # Построение дерева различий (шаг 7)
+    diff = build_diff(data1, data2)
 
-    result = ["{"]
+    # Форматирование результата (шаг 7)
+    if format_name == 'stylish':
+        return format_stylish(diff)
+    else:
+        raise ValueError(f"Неизвестный форматер: {format_name}")
 
-    for key in all_keys:
+# Далее изначальная структура функции (до шага 7)
 
-        if key in data1 and key in data2:
-            if data1[key] == data2[key]:
-                result.append(f"    {key}: {format_value(data1[key])}")
-            else:
-                result.append(f"  - {key}: {format_value(data1[key])}")
-                result.append(f"  + {key}: {data2[key]}")
+#    all_keys = sorted(set(data1.keys()).union(data2.keys()))
 
-        elif key in data1:
-            result.append(f"  - {key}: {format_value(data1[key])}")
+#    result = ["{"]
 
-        elif key in data2:
-            result.append(f"  + {key}: {format_value(data2[key])}")
+#    for key in all_keys:
 
-    result.append("}")
+#        if key in data1 and key in data2:
+#            if data1[key] == data2[key]:
+#                result.append(f"    {key}: {format_value(data1[key])}")
+#            else:
+#                result.append(f"  - {key}: {format_value(data1[key])}")
+#                result.append(f"  + {key}: {data2[key]}")
 
-    return "\n".join(result)
+#        elif key in data1:
+#            result.append(f"  - {key}: {format_value(data1[key])}")
+
+#        elif key in data2:
+#            result.append(f"  + {key}: {format_value(data2[key])}")
+
+#    result.append("}")
+
+#    return "\n".join(result)
 
 
 def main():
@@ -51,15 +111,15 @@ def main():
     # Добавляем опцию --format для выбора формата вывода
     parser.add_argument(
         "-f", "--format",
-        choices=["plain", "json"],  # доступные форматы
-        default="json",  # формат по умолчанию
+        choices=["stylish", "plain", "json"],  # доступные форматы
+        default="stylish",  # формат по умолчанию
         help="set format of output"
     )
 
     # Парсим аргументы
     args = parser.parse_args()
 
-    diff = generate_diff(args.first_file, args.second_file)
+    diff = generate_diff(args.first_file, args.second_file, format_name=args.format)
     print(diff)
 
 

@@ -71,7 +71,7 @@ def test_missing_keys():
 
 def test_diff_yaml_files():
     """
-    Проверяет, что различия между файлами корректно отображаются.
+    Проверяет, что различия между файлами YAML корректно отображаются.
     """
     file1 = os.path.join(FIXTURES_DIR, "file1.yml")
     file2 = os.path.join(FIXTURES_DIR, "file2.yml")
@@ -79,3 +79,24 @@ def test_diff_yaml_files():
     diff = generate_diff(file1, file2)
     assert diff == expected
 
+
+def test_diff_recursive_json_files():
+    """
+    Проверяет, что различия между файлами JSON с вложенностью корректно отображаются.
+    """
+    file1 = os.path.join(FIXTURES_DIR, "file1_rec.json")
+    file2 = os.path.join(FIXTURES_DIR, "file2_rec.json")
+    expected = read_fixture("expected_diff_rec.txt").strip()
+    diff = generate_diff(file1, file2)
+    assert diff == expected
+
+
+def test_diff_recursive_yaml_files():
+    """
+    Проверяет, что различия между файлами YAML с вложенностью корректно отображаются.
+    """
+    file1 = os.path.join(FIXTURES_DIR, "file1_rec.yml")
+    file2 = os.path.join(FIXTURES_DIR, "file2_rec.yml")
+    expected = read_fixture("expected_diff_rec.txt").strip()
+    diff = generate_diff(file1, file2)
+    assert diff == expected
