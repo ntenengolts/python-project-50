@@ -30,8 +30,8 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          poetry run pytest --maxfail=1 --disable-warnings -q  # Запуск тестов через Poetry
-          poetry run coverage xml -o coverage.xml  # Генерация отчета
+          poetry run coverage run --source=gendiff -m pytest --maxfail=1 --disable-warnings -q  # Запуск тестов через Poetry
+          poetry run coverage report
 
       - name: Upload coverage to Code Climate
         env:
