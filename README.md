@@ -5,3 +5,4 @@
 [![Test Coverage](https://api.codeclimate.com/v1/badges/fbbc78af67611cd43906/test_coverage)](https://codeclimate.com/github/ntenengolts/python-project-50/test_coverage)
 
 [![asciicast](https://asciinema.org/a/DKmdYZRweynVIoTd0XbaEM7gs.svg)](https://asciinema.org/a/DKmdYZRweynVIoTd0XbaEM7gs)
+[![asciicast](https://asciinema.org/a/RTnvo52t9YLpemmjDywQcZd8L.svg)](https://asciinema.org/a/RTnvo52t9YLpemmjDywQcZd8L)
