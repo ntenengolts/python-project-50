@@ -4,6 +4,7 @@ import yaml
 
 from gendiff.parser import read_file
 from gendiff.formatters.stylish import format_stylish
+from gendiff.formatters.plain import format_plain
 
 def format_value(value, depth=0):
     """
@@ -67,10 +68,15 @@ def generate_diff(file_path1, file_path2, format_name='stylish'):
 
     # Построение дерева различий (шаг 7)
     diff = build_diff(data1, data2)
+#    print(f"DEBUG: diff = {diff}")
 
     # Форматирование результата (шаг 7)
     if format_name == 'stylish':
         return format_stylish(diff)
+    elif format_name == 'plain':
+        result = format_plain(diff)
+#        print(f"DEBUG: result = {result}")
+        return result
     else:
         raise ValueError(f"Неизвестный форматер: {format_name}")
 

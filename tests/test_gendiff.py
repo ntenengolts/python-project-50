@@ -100,3 +100,16 @@ def test_diff_recursive_yaml_files():
     expected = read_fixture("expected_diff_rec.txt").strip()
     diff = generate_diff(file1, file2)
     assert diff == expected
+
+
+def test_plain_format():
+    """
+    Проверяет, что различия между плоскими файлами корректно отображаются.
+    """
+    file1 = os.path.join(FIXTURES_DIR, "file1_rec.json")
+    file2 = os.path.join(FIXTURES_DIR, "file2_rec.json")
+    expected = read_fixture("expected_diff_plain.txt").strip()
+
+    diff = generate_diff(file1, file2, format_name="plain")
+#    print(f'DEBUG: diff = {diff}')
+    assert diff == expected

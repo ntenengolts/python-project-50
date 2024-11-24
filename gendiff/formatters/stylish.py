@@ -8,6 +8,7 @@ def format_value(value, depth):
         return "{\n" + "\n".join(lines) + f"\n{'    ' * depth}}}"
     return str(value).lower() if isinstance(value, bool) else str(value) if value is not None else "null"
 
+
 def format_stylish(diff, depth=0):
     """
     Форматирует внутреннее дерево различий в стиль 'stylish'.
