@@ -5,6 +5,8 @@ import yaml
 from gendiff.parser import read_file
 from gendiff.formatters.stylish import format_stylish
 from gendiff.formatters.plain import format_plain
+from gendiff.formatters.json import format_json
+
 
 def format_value(value, depth=0):
     """
@@ -77,6 +79,8 @@ def generate_diff(file_path1, file_path2, format_name='stylish'):
         result = format_plain(diff)
 #        print(f"DEBUG: result = {result}")
         return result
+    elif format_name == 'json':
+        return format_json(diff)
     else:
         raise ValueError(f"Неизвестный форматер: {format_name}")
 

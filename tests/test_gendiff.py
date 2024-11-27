@@ -113,3 +113,15 @@ def test_plain_format():
     diff = generate_diff(file1, file2, format_name="plain")
 #    print(f'DEBUG: diff = {diff}')
     assert diff == expected
+
+
+def test_json_format():
+    """
+    Проверяет, что различия между плоскими файлами корректно отображаются.
+    """
+    file1 = os.path.join(FIXTURES_DIR, "file1_rec.json")
+    file2 = os.path.join(FIXTURES_DIR, "file2_rec.json")
+    expected = read_fixture("expected_diff_json.txt").strip()
+
+    diff = generate_diff(file1, file2, format_name="json")
+    assert diff == expected
