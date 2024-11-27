@@ -4,9 +4,13 @@ def format_value(value, depth):
     """
     if isinstance(value, dict):
         indent = "    " * (depth + 1)
-        lines = [f"{indent}{key}: {format_value(val, depth + 1)}" for key, val in value.items()]
+        lines = [
+            f"{indent}{key}: "
+            f"{format_value(val, depth + 1)}" for key, val in value.items()
+        ]
         return "{\n" + "\n".join(lines) + f"\n{'    ' * depth}}}"
-    return str(value).lower() if isinstance(value, bool) else str(value) if value is not None else "null"
+    return str(value).lower() if isinstance(
+        value, bool) else str(value) if value is not None else "null"
 
 
 def format_stylish(diff, depth=0):
@@ -26,14 +30,29 @@ def format_stylish(diff, depth=0):
             children = format_stylish(node["children"], depth + 1)
             result.append(f"{current_indent}{key}: {children}")
         elif type_ == "added":
-            result.append(f"{indent}  + {key}: {format_value(node['value'], depth + 1)}")
+            result.append(
+                f"{indent}  + {key}: "
+                f"{format_value(node['value'], depth + 1)}"
+            )
         elif type_ == "removed":
-            result.append(f"{indent}  - {key}: {format_value(node['value'], depth + 1)}")
+            result.append(
+                f"{indent}  - {key}: "
+                f"{format_value(node['value'], depth + 1)}"
+            )
         elif type_ == "changed":
-            result.append(f"{indent}  - {key}: {format_value(node['value_before'], depth + 1)}")
-            result.append(f"{indent}  + {key}: {format_value(node['value_after'], depth + 1)}")
+            result.append(
+                f"{indent}  - {key}: "
+                f"{format_value(node['value_before'], depth + 1)}"
+            )
+            result.append(
+                f"{indent}  + {key}: "
+                f"{format_value(node['value_after'], depth + 1)}"
+            )
         elif type_ == "unchanged":
-            result.append(f"{current_indent}{key}: {format_value(node['value'], depth + 1)}")
+            result.append(
+                f"{current_indent}{key}: "
+                f"{format_value(node['value'], depth + 1)}"
+            )
 
     result.append(indent + "}")
     return "\n".join(result)

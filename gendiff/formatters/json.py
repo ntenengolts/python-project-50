@@ -10,14 +10,15 @@ def format_value(value):
     elif value is None:
         return None  # Для JSON None напрямую преобразуется в null
     elif isinstance(value, bool):
-        return value  # Булевые значения True/False корректно интерпретируются JSON
+        return value  # Булевые значения True/False корректно интерпретируются
     else:
-        return value  # Все остальные типы, например числа, остаются без изменений
+        return value  # Все остальные типы остаются без изменений
 
 
 def format_json(diff):
     """
-    Форматирует дерево различий в JSON-вывод, соответствующий ожидаемому формату.
+    Форматирует дерево различий в JSON-вывод,
+    соответствующий ожидаемому формату.
     """
     def walk(node):
         result = {}
@@ -42,7 +43,7 @@ def format_json(diff):
                 }
             elif type == "nested":
                 result[key] = walk(changes.get("children", []))
-            # Пропускаем "unchanged", так как оно не входит в итоговый результат
+
         return result
 
     # Возвращаем отформатированный JSON в виде строки

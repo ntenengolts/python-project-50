@@ -1,6 +1,4 @@
 import argparse
-import json
-import yaml
 
 from gendiff.parser import read_file
 from gendiff.formatters.stylish import format_stylish
@@ -45,9 +43,13 @@ def build_diff(data1, data2):
             if isinstance(data1[key], dict) and isinstance(data2[key], dict):
                 # Рекурсивно строим diff для вложенных структур
                 children = build_diff(data1[key], data2[key])
-                diff.append({"key": key, "type": "nested", "children": children})
+                diff.append(
+                    {"key": key, "type": "nested", "children": children}
+                )
             elif data1[key] == data2[key]:
-                diff.append({"key": key, "type": "unchanged", "value": data1[key]})
+                diff.append(
+                    {"key": key, "type": "unchanged", "value": data1[key]}
+                )
             else:
                 diff.append({
                     "key": key,
@@ -129,7 +131,9 @@ def main():
     # Парсим аргументы
     args = parser.parse_args()
 
-    diff = generate_diff(args.first_file, args.second_file, format_name=args.format)
+    diff = generate_diff(
+        args.first_file, args.second_file, format_name=args.format
+    )
     print(diff)
 
 

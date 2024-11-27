@@ -82,7 +82,8 @@ def test_diff_yaml_files():
 
 def test_diff_recursive_json_files():
     """
-    Проверяет, что различия между файлами JSON с вложенностью корректно отображаются.
+    Проверяет, что различия между файлами JSON
+    с вложенностью корректно отображаются.
     """
     file1 = os.path.join(FIXTURES_DIR, "file1_rec.json")
     file2 = os.path.join(FIXTURES_DIR, "file2_rec.json")
@@ -93,7 +94,8 @@ def test_diff_recursive_json_files():
 
 def test_diff_recursive_yaml_files():
     """
-    Проверяет, что различия между файлами YAML с вложенностью корректно отображаются.
+    Проверяет, что различия между файлами YAML
+    с вложенностью корректно отображаются.
     """
     file1 = os.path.join(FIXTURES_DIR, "file1_rec.yml")
     file2 = os.path.join(FIXTURES_DIR, "file2_rec.yml")

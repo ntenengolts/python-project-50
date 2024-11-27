@@ -33,6 +33,10 @@ jobs:
           poetry run coverage run --source=gendiff -m pytest --maxfail=1 --disable-warnings -q  # Запуск тестов через Poetry
           poetry run coverage report
 
+      - name: Check code style and imports
+        run: |
+          make check
+
       - name: Upload coverage to Code Climate
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
