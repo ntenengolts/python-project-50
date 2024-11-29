@@ -25,34 +25,62 @@ def format_stylish(diff, depth=0):
         type_ = node["type"]
         current_indent = indent + "    "  # Отступ для текущего уровня
 
-        if type_ == "nested":
-            # Рекурсивно обрабатываем дочерние элементы
-            children = format_stylish(node["children"], depth + 1)
-            result.append(f"{current_indent}{key}: {children}")
-        elif type_ == "added":
-            result.append(
-                f"{indent}  + {key}: "
-                f"{format_value(node['value'], depth + 1)}"
-            )
-        elif type_ == "removed":
-            result.append(
-                f"{indent}  - {key}: "
-                f"{format_value(node['value'], depth + 1)}"
-            )
-        elif type_ == "changed":
-            result.append(
-                f"{indent}  - {key}: "
-                f"{format_value(node['value_before'], depth + 1)}"
-            )
-            result.append(
-                f"{indent}  + {key}: "
-                f"{format_value(node['value_after'], depth + 1)}"
-            )
-        elif type_ == "unchanged":
-            result.append(
-                f"{current_indent}{key}: "
-                f"{format_value(node['value'], depth + 1)}"
-            )
+        handler = {
+            "nested": handle_nested,
+            "added": handle_added,
+            "removed": handle_removed,
+            "changed": handle_changed,
+            "unchanged": handle_unchanged,
+        }.get(type_)
+
+        if handler:
+            result.extend(handler(node, key, indent, current_indent, depth))
 
     result.append(indent + "}")
     return "\n".join(result)
+
+
+# Вспомогательные функции для обработки каждого типа узлов
+def handle_nested(node, key, indent, current_indent, depth):
+    """
+    Обрабатывает узел с типом 'nested'.
+    """
+    children = format_stylish(node["children"], depth + 1)
+    return [f"{current_indent}{key}: {children}"]
+
+
+def handle_added(node, key, indent, current_indent, depth):
+    """
+    Обрабатывает узел с типом 'added'.
+    """
+    return [
+        f"{indent}  + {key}: {format_value(node['value'], depth + 1)}"
+    ]
+
+
+def handle_removed(node, key, indent, current_indent, depth):
+    """
+    Обрабатывает узел с типом 'removed'.
+    """
+    return [
+        f"{indent}  - {key}: {format_value(node['value'], depth + 1)}"
+    ]
+
+
+def handle_changed(node, key, indent, current_indent, depth):
+    """
+    Обрабатывает узел с типом 'changed'.
+    """
+    return [
+        f"{indent}  - {key}: {format_value(node['value_before'], depth + 1)}",
+        f"{indent}  + {key}: {format_value(node['value_after'], depth + 1)}",
+    ]
+
+
+def handle_unchanged(node, key, indent, current_indent, depth):
+    """
+    Обрабатывает узел с типом 'unchanged'.
+    """
+    return [
+        f"{current_indent}{key}: {format_value(node['value'], depth + 1)}"
+    ]

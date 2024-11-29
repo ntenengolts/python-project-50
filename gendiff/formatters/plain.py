@@ -12,33 +12,47 @@ def format_value(value):
         return str(value).lower()
 
 
+def added(key, changes, path):
+    value = format_value(changes.get("value"))
+    return f"Property '{path}' was added with value: {value}"
+
+
+def removed(key, changes, path):
+    return f"Property '{path}' was removed"
+
+
+def updated(key, changes, path):
+    old_value = format_value(changes.get("value_before"))
+    new_value = format_value(changes.get("value_after"))
+    return (
+        f"Property '{path}' was updated. "
+        f"From {old_value} to {new_value}"
+    )
+
+
+def walk(node, path=""):
+    lines = []
+    for changes in node:
+        key = changes["key"]
+        current_path = f"{path}.{key}" if path else key
+        type = changes["type"]
+
+        if type == "added":
+            lines.append(added(key, changes, current_path))
+
+        elif type == "removed":
+            lines.append(removed(key, changes, current_path))
+
+        elif type in {"updated", "changed"}:
+            lines.append(updated(key, changes, current_path))
+
+        elif type == "nested":
+            lines.extend(walk(changes.get("children", []), current_path))
+    return lines
+
+
 def format_plain(diff):
     """
     Форматирует дерево различий в плоский текстовый вид (plain).
     """
-    def walk(node, path=""):
-        lines = []
-        for changes in node:
-            key = changes["key"]
-            current_path = f"{path}.{key}" if path else key
-            type = changes["type"]
-
-            if type == "added":
-                value = format_value(changes.get("value"))
-                lines.append(
-                    f"Property '{current_path}' was added with value: {value}"
-                )
-            elif type == "removed":
-                lines.append(f"Property '{current_path}' was removed")
-            elif type in {"updated", "changed"}:
-                old_value = format_value(changes.get("value_before"))
-                new_value = format_value(changes.get("value_after"))
-                lines.append(
-                    f"Property '{current_path}' was updated. "
-                    f"From {old_value} to {new_value}"
-                )
-            elif type == "nested":
-                lines.extend(walk(changes.get("children", []), current_path))
-        return lines
-
     return "\n".join(walk(diff))

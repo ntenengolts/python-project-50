@@ -15,36 +15,46 @@ def format_value(value):
         return value  # Все остальные типы остаются без изменений
 
 
+def added_value(changes):
+    """Возвращает форматированное добавленное значение."""
+    return {"type": "added", "value": format_value(changes.get("value"))}
+
+
+def removed_value():
+    """Возвращает форматированное значение для удаления."""
+    return {"type": "removed"}
+
+
+def updated_value(changes):
+    """Возвращает форматированное обновленное значение."""
+    return {
+        "type": "updated",
+        "value_before": format_value(changes.get("value_before")),
+        "value_after": format_value(changes.get("value_after"))
+    }
+
+
+def walk(node):
+    result = {}
+    for changes in node:
+        key = changes["key"]
+        type = changes["type"]
+
+        if type == "added":
+            result[key] = added_value(changes)
+        elif type == "removed":
+            result[key] = removed_value()
+        elif type == "changed":
+            result[key] = updated_value(changes)
+        elif type == "nested":
+            result[key] = walk(changes.get("children", []))
+
+    return result
+
+
 def format_json(diff):
     """
     Форматирует дерево различий в JSON-вывод,
     соответствующий ожидаемому формату.
     """
-    def walk(node):
-        result = {}
-        for changes in node:
-            key = changes["key"]
-            type = changes["type"]
-
-            if type == "added":
-                result[key] = {
-                    "type": "added",
-                    "value": format_value(changes.get("value"))
-                }
-            elif type == "removed":
-                result[key] = {
-                    "type": "removed"
-                }
-            elif type == "changed":  # Обработка изменений
-                result[key] = {
-                    "type": "updated",
-                    "value_before": format_value(changes.get("value_before")),
-                    "value_after": format_value(changes.get("value_after"))
-                }
-            elif type == "nested":
-                result[key] = walk(changes.get("children", []))
-
-        return result
-
-    # Возвращаем отформатированный JSON в виде строки
     return json.dumps(walk(diff), indent=4)
