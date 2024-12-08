@@ -1,11 +1,7 @@
 import os
-import sys
+import pytest
 
 from gendiff import generate_diff
-
-sys.path.insert(0, os.path.abspath(
-    os.path.join(os.path.dirname(__file__), "..")
-))
 
 FIXTURES_DIR = os.path.join(os.path.dirname(__file__), "fixtures")
 
@@ -15,115 +11,35 @@ def read_fixture(file_name):
     Читает содержимое файла фикстуры.
     """
     with open(os.path.join(FIXTURES_DIR, file_name), "r") as file:
-        return file.read()
+        return file.read().strip()
 
 
-def test_identical_files():
+@pytest.mark.parametrize(
+    "file1, file2, format_name, expected_fixture",
+    [
+        ("file1.json", "file1.json", "stylish", "{\n    age: 30\n    name: Alice\n}"),
+        ("file1.json", "file2.json", "stylish", "expected_diff.txt"),
+        ("file3.json", "file4.json", "stylish", "{\n  + city: New York\n}"),
+        ("file3.json", "file3.json", "stylish", "{\n}"),
+        ("file1.json", "file4.json", "stylish", "{\n  - age: 30\n  + city: New York\n  - name: Alice\n}"),
+        ("file1.yml", "file2.yml", "stylish", "expected_diff_yml.txt"),
+        ("file1_rec.json", "file2_rec.json", "stylish", "expected_diff_rec.txt"),
+        ("file1_rec.yml", "file2_rec.yml", "stylish", "expected_diff_rec.txt"),
+        ("file1_rec.json", "file2_rec.json", "plain", "expected_diff_plain.txt"),
+        ("file1_rec.json", "file2_rec.json", "json", "expected_diff_json.txt"),
+    ],
+)
+def test_generate_diff(file1, file2, format_name, expected_fixture):
     """
-    Проверяет, что два идентичных JSON-файла не содержат различий.
+    Параметризованный тест для проверки generate_diff.
     """
-    file1 = os.path.join(FIXTURES_DIR, "file1.json")
-    diff = generate_diff(file1, file1)
-    assert diff == "{\n    age: 30\n    name: Alice\n}"
+    file1_path = os.path.join(FIXTURES_DIR, file1)
+    file2_path = os.path.join(FIXTURES_DIR, file2)
 
+    if expected_fixture.endswith(".txt"):
+        expected = read_fixture(expected_fixture)
+    else:
+        expected = expected_fixture
 
-def test_different_files():
-    """
-    Проверяет, что различия между файлами корректно отображаются.
-    """
-    file1 = os.path.join(FIXTURES_DIR, "file1.json")
-    file2 = os.path.join(FIXTURES_DIR, "file2.json")
-    expected = read_fixture("expected_diff.txt").strip()
-    diff = generate_diff(file1, file2)
-    assert diff == expected
-
-
-def test_empty_and_non_empty_files():
-    """
-    Проверяет работу с пустым файлом и файлом с данными.
-    """
-    file3 = os.path.join(FIXTURES_DIR, "file3.json")
-    file4 = os.path.join(FIXTURES_DIR, "file4.json")
-    diff = generate_diff(file3, file4)
-    assert diff == "{\n  + city: New York\n}"
-
-
-def test_empty_files():
-    """
-    Проверяет корректность сравнения двух пустых файлов.
-    """
-    file3 = os.path.join(FIXTURES_DIR, "file3.json")
-    diff = generate_diff(file3, file3)
-    assert diff == "{\n}"
-
-
-def test_missing_keys():
-    """
-    Проверяет, что функция корректно обрабатывает файлы
-    с отсутствующими ключами.
-    """
-    file1 = os.path.join(FIXTURES_DIR, "file1.json")
-    file4 = os.path.join(FIXTURES_DIR, "file4.json")
-    diff = generate_diff(file1, file4)
-    expected = "{\n  - age: 30\n  + city: New York\n  - name: Alice\n}"
-    assert diff == expected
-
-
-def test_diff_yaml_files():
-    """
-    Проверяет, что различия между файлами YAML корректно отображаются.
-    """
-    file1 = os.path.join(FIXTURES_DIR, "file1.yml")
-    file2 = os.path.join(FIXTURES_DIR, "file2.yml")
-    expected = read_fixture("expected_diff_yml.txt").strip()
-    diff = generate_diff(file1, file2)
-    assert diff == expected
-
-
-def test_diff_recursive_json_files():
-    """
-    Проверяет, что различия между файлами JSON
-    с вложенностью корректно отображаются.
-    """
-    file1 = os.path.join(FIXTURES_DIR, "file1_rec.json")
-    file2 = os.path.join(FIXTURES_DIR, "file2_rec.json")
-    expected = read_fixture("expected_diff_rec.txt").strip()
-    diff = generate_diff(file1, file2)
-    assert diff == expected
-
-
-def test_diff_recursive_yaml_files():
-    """
-    Проверяет, что различия между файлами YAML
-    с вложенностью корректно отображаются.
-    """
-    file1 = os.path.join(FIXTURES_DIR, "file1_rec.yml")
-    file2 = os.path.join(FIXTURES_DIR, "file2_rec.yml")
-    expected = read_fixture("expected_diff_rec.txt").strip()
-    diff = generate_diff(file1, file2)
-    assert diff == expected
-
-
-def test_plain_format():
-    """
-    Проверяет, что различия между плоскими файлами корректно отображаются.
-    """
-    file1 = os.path.join(FIXTURES_DIR, "file1_rec.json")
-    file2 = os.path.join(FIXTURES_DIR, "file2_rec.json")
-    expected = read_fixture("expected_diff_plain.txt").strip()
-
-    diff = generate_diff(file1, file2, format_name="plain")
-#    print(f'DEBUG: diff = {diff}')
-    assert diff == expected
-
-
-def test_json_format():
-    """
-    Проверяет, что различия между плоскими файлами корректно отображаются.
-    """
-    file1 = os.path.join(FIXTURES_DIR, "file1_rec.json")
-    file2 = os.path.join(FIXTURES_DIR, "file2_rec.json")
-    expected = read_fixture("expected_diff_json.txt").strip()
-
-    diff = generate_diff(file1, file2, format_name="json")
+    diff = generate_diff(file1_path, file2_path, format_name=format_name)
     assert diff == expected
