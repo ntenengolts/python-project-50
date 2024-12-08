@@ -1,15 +1,14 @@
 import argparse
 
+from gendiff.build_diff import build_diff
 from gendiff.formatters.json import format_json
 from gendiff.formatters.plain import format_plain
 from gendiff.formatters.stylish import format_stylish
 from gendiff.parser import read_file
-from gendiff.build_diff import build_diff
-
 
 # def format_value(value, depth=0):
 
-  #  Форматирует значение для отображения.
+#  Форматирует значение для отображения.
 
 #    if isinstance(value, dict):
 #        indent = "    " * (depth + 1)

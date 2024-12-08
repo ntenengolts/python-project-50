@@ -1,4 +1,5 @@
 import os
+
 import pytest
 
 from gendiff import generate_diff
@@ -17,15 +18,27 @@ def read_fixture(file_name):
 @pytest.mark.parametrize(
     "file1, file2, format_name, expected_fixture",
     [
-        ("file1.json", "file1.json", "stylish", "{\n    age: 30\n    name: Alice\n}"),
+        (
+            "file1.json", "file1.json", "stylish",
+            "{\n    age: 30\n    name: Alice\n}"
+        ),
         ("file1.json", "file2.json", "stylish", "expected_diff.txt"),
         ("file3.json", "file4.json", "stylish", "{\n  + city: New York\n}"),
         ("file3.json", "file3.json", "stylish", "{\n}"),
-        ("file1.json", "file4.json", "stylish", "{\n  - age: 30\n  + city: New York\n  - name: Alice\n}"),
+        (
+            "file1.json", "file4.json", "stylish",
+            "{\n  - age: 30\n  + city: New York\n  - name: Alice\n}"
+        ),
         ("file1.yml", "file2.yml", "stylish", "expected_diff_yml.txt"),
-        ("file1_rec.json", "file2_rec.json", "stylish", "expected_diff_rec.txt"),
+        (
+            "file1_rec.json", "file2_rec.json",
+            "stylish", "expected_diff_rec.txt"
+        ),
         ("file1_rec.yml", "file2_rec.yml", "stylish", "expected_diff_rec.txt"),
-        ("file1_rec.json", "file2_rec.json", "plain", "expected_diff_plain.txt"),
+        (
+            "file1_rec.json", "file2_rec.json",
+            "plain", "expected_diff_plain.txt"
+        ),
         ("file1_rec.json", "file2_rec.json", "json", "expected_diff_json.txt"),
     ],
 )
