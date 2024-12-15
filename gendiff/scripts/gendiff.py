@@ -1,6 +1,5 @@
-from gendiff.core import generate_diff
-
 from gendiff.cli import parse_arguments
+from gendiff.core import generate_diff
 
 
 def main():
