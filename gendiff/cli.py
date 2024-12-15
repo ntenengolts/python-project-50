@@ -19,4 +19,3 @@ def parse_arguments():
 
     # Парсим аргументы
     return parser.parse_args()
-

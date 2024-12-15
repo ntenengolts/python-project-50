@@ -51,7 +51,6 @@ def test_generate_diff(file1, file2, format_name, expected_fixture):
     """
     file1_path = os.path.join(FIXTURES_DIR, file1)
     file2_path = os.path.join(FIXTURES_DIR, file2)
-    expected_path = os.path.join(FIXTURES_DIR, expected_fixture)
 
     expected = read_fixture(expected_fixture)
 
