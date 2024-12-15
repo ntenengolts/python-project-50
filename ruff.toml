@@ -1,0 +1,16 @@
+exclude = [
+    "migrations/",
+    "node_modules/",
+    "__pycache__/",
+]
+
+lint.ignore = [
+    "E501",
+    "F401"
+]
+
+line-length = 88
+
+[lint.isort]
+combine-as-imports = true
+force-sort-within-sections = true
