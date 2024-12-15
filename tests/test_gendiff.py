@@ -20,14 +20,17 @@ def read_fixture(file_name):
     [
         (
             "file1.json", "file1.json", "stylish",
-            "{\n    age: 30\n    name: Alice\n}"
+            "expected_file1_vs_file1.txt"
         ),
         ("file1.json", "file2.json", "stylish", "expected_diff.txt"),
-        ("file3.json", "file4.json", "stylish", "{\n  + city: New York\n}"),
-        ("file3.json", "file3.json", "stylish", "{\n}"),
+        (
+            "file3.json", "file4.json",
+            "stylish", "expected_file3_vs_file4.txt"
+        ),
+        ("file3.json", "file3.json", "stylish", "expected_file3_vs_file3.txt"),
         (
             "file1.json", "file4.json", "stylish",
-            "{\n  - age: 30\n  + city: New York\n  - name: Alice\n}"
+            "expected_file1_vs_file4.txt"
         ),
         ("file1.yml", "file2.yml", "stylish", "expected_diff_yml.txt"),
         (
@@ -48,11 +51,32 @@ def test_generate_diff(file1, file2, format_name, expected_fixture):
     """
     file1_path = os.path.join(FIXTURES_DIR, file1)
     file2_path = os.path.join(FIXTURES_DIR, file2)
+    expected_path = os.path.join(FIXTURES_DIR, expected_fixture)
 
-    if expected_fixture.endswith(".txt"):
-        expected = read_fixture(expected_fixture)
-    else:
-        expected = expected_fixture
+    expected = read_fixture(expected_fixture)
 
     diff = generate_diff(file1_path, file2_path, format_name=format_name)
     assert diff == expected
+
+
+def test_generate_diff_invalid_format():
+    """
+    Тест для проверки ошибок при неправильных форматах входных файлов.
+    """
+    invalid_file1 = os.path.join(FIXTURES_DIR, "invalid_file.json")
+    invalid_file2 = os.path.join(FIXTURES_DIR, "invalid_file2.yml")
+
+    # Проверяем, что корректно обрабатывается ошибка FileNotFoundError
+    with pytest.raises(FileNotFoundError):
+        generate_diff(invalid_file1, invalid_file2, format_name="stylish")
+
+
+def test_generate_diff_invalid_formatters():
+    """
+    Проверяем передачу неподдерживаемого форматтера.
+    """
+    file1 = os.path.join(FIXTURES_DIR, "file1.json")
+    file2 = os.path.join(FIXTURES_DIR, "file2.json")
+
+    with pytest.raises(ValueError, match="Неизвестный форматер: invalid"):
+        generate_diff(file1, file2, format_name="invalid")
