@@ -9,6 +9,8 @@ lint.ignore = [
     "F401"
 ]
 
+fix = true
+
 line-length = 88
 
 [lint.isort]
