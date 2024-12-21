@@ -37,10 +37,6 @@ jobs:
         run: |
           poetry run ruff check --fix .
 
-      - name: Check code style and imports
-        run: |
-          make check
-
       - name: Upload coverage to Code Climate
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
