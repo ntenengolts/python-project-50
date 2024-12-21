@@ -4,6 +4,7 @@ import pytest
 
 from gendiff import generate_diff
 
+
 FIXTURES_DIR = os.path.join(os.path.dirname(__file__), "fixtures")
 
 
